@@ -7,33 +7,53 @@ var clear = document.querySelector('.clear');
 var timer = document.querySelector('.timer');
 var res = document.querySelector('.results');
 
-socket.on('connect', function(data) {
-	console.log(data);
+socket.on('connect', function (data) {
+    console.log(data);
 });
 
 
 if (window.location.pathname.indexOf('timer-2') == -1) {
     start.addEventListener('click', function () {
-        Timer.start()
+      //  Timer.start()
+        Timer2.start()
         //socket.send('start_timer')
         socket.emit('start_timer')
     })
     stop.addEventListener('click', function () {
-        Timer.stop()
+       // Timer.stop()
+        Timer2.stop()
         socket.emit('stop')
     })
     clear.addEventListener('click', function () {
-        Timer.clear()
+      //  Timer.clear()
         socket.emit('clear')
     })
     loop.addEventListener('click', function () {
-        Timer.loop()
+      //  Timer.loop()
         socket.emit('loop')
     })
 }
 
 var interval, loop, isRun = false;
-
+var timerLoop
+var Timer2 = {
+    miliseconds: 0,
+    start: function () {
+        timerLoop = setInterval(() => {
+            this.miliseconds += 100;
+            this.render()
+        }, 1000 / 10)
+    },
+    stop: function () {
+        clearInterval(timerLoop)
+    },
+    render: function () {
+        var time = String(this.miliseconds / 1000).split('.')
+        var sec = parseInt(time[0]) < 10 ? '0' + time[0] : time[0], 
+            milisec = time[1] || '0'
+        timer.innerHTML = `00:${sec}<span class='milisec'>.${milisec}</span>`;
+    }
+}
 var Timer = {
     timer: 0,
     min: 0,
@@ -59,6 +79,7 @@ var Timer = {
                 this.sec = 0;
             }
             this.milisec++;
+
             this.update();
         }, 1000 / 10);
 
@@ -114,8 +135,8 @@ var Timer = {
     }
 }
 
-function enableBtn(){
-    setTimeout(function(){
+function enableBtn() {
+    setTimeout(function () {
         isRun = false
     }, 3000)
 }
@@ -141,6 +162,6 @@ $('.expand').click(function () {
     $('.main-container').toggleClass('full-screen')
 })
 
-$(document).keypress(function(e){
-    if(e.keyCode == 114) isRun = false
+$(document).keypress(function (e) {
+    if (e.keyCode == 114) isRun = false
 })
