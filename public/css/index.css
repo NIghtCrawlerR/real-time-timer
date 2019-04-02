@@ -1,0 +1,203 @@
+@font-face {
+    font-family: TimeFont;
+    src: url('../fonts/TimeFont-mono.ttf');
+}
+
+body {
+    background: #f0f0f0;
+    font-family: 'Open Sans', sans-serif;
+}
+body.default {
+    color: #555;
+}
+
+.header {
+    position: fixed;
+    width: 100%;
+    height: 80px;
+    top: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 35px;
+    translate: all .3s;
+}
+.settings-btn {
+    margin-left: auto;
+    color: #fff;
+    cursor: pointer;
+    font-size: 24px;
+}
+.light-mode .header {
+    background: #0090dd;
+}
+.dark-mode .header {
+    background: #0090dd;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.main-container {
+    position: relative;
+    padding: 35px;
+    transition: all .3s;
+}
+.right-sidebar {
+    background-color: #484747;
+    overflow-y: hidden;
+    position: fixed;
+    width: 255px;
+    height: 100%;
+    top: 0;
+    right: -255px;
+    transition: all .4s;
+}
+.right-sidebar .content {
+    color: #fff;
+    padding: 20px;
+}
+.sidebar-open .main-container, .sidebar-open .header {
+    left: -255px;
+}
+.sidebar-open .right-sidebar {
+    right: 0;
+}
+.pannel {
+    background: #fff;
+    margin-bottom: 30px;
+    
+}
+.pannel.time {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 500px;
+}
+.pannel.loops {
+    padding: 20px 0;
+}
+.expand {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+}
+.full-screen {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    background: #fff;
+}
+.btn {
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    padding: 8px 12px;
+    font-size: 14px;
+    line-height: 1.6;
+    border-radius: 0;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    padding: 8px 12px;
+    font-size: 13px;
+    line-height: 1.6;
+    border-radius: 0;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    min-width: 90px;
+}
+
+.btn-primary {
+    border-color: #007fc4;
+    color: #fff;
+    background-color: #0090dd;
+    border-color: #0090dd;
+}
+.btn-success {
+    border-color: #429c65;
+    color: #fff;
+    background-color: #4aae71;
+    border-color: #4aae71;
+}
+.btn-danger {
+    border-color: #ed4b4b;
+    color: #fff;
+    background-color: #EF6262;
+    border-color: #EF6262;
+}
+.btn-warning {
+    border-color: #eda004;
+    color: #fff;
+    background-color: #fbad10;
+    border-color: #fbad10;
+}
+
+.timer_wrap {
+    text-align: center;
+    letter-spacing: 0.10em;
+    padding: 12px;
+}
+
+.timer {
+    font-size: 290px;
+    line-height: auto;
+    font-family: 'TimeFont', Verdana;
+}
+.timer .milisec {
+    font-size: 50px;
+}
+.res-time .milisec {
+    font-size: 50px;
+}
+.btn-group {
+    margin: auto;
+    text-align: center;
+}
+
+.results {
+    margin: auto;
+    width: 900px;
+}
+
+.results th {
+    padding: 20px;
+    font-family: 'Open Sans';
+    font-weight: 300;
+    font-size: 30px;
+}
+
+.res-time {
+    font-family: 'TimeFont', Verdana;
+}
+
+.results .loop {
+    font-size: 80px;
+    padding: 15px;
+    box-sizing: border-box;
+    margin: 0;
+    text-align: center;
+}
+
+.panel-colors .icon {
+    display: inline-block;
+    margin-right: 5px;
+    font-size: 28px;
+    line-height: 28px;
+    vertical-align: middle;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
