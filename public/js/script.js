@@ -38,9 +38,14 @@ var interval, loop, isRun = false;
 var timerLoop
 var Timer2 = {
     miliseconds: 0,
+    minutes: 0,
     start: function () {
         timerLoop = setInterval(() => {
-            this.miliseconds += 100;
+            if(this.miliseconds == 60000) {
+                this.miliseconds = 0;
+                this.minutes++
+            }
+            else this.miliseconds += 100;
             this.render()
         }, 1000 / 10)
     },
@@ -50,10 +55,12 @@ var Timer2 = {
     render: function () {
         var time = String(this.miliseconds / 1000).split('.')
         var sec = parseInt(time[0]) < 10 ? '0' + time[0] : time[0], 
-            milisec = time[1] || '0'
-        timer.innerHTML = `00:${sec}<span class='milisec'>.${milisec}</span>`;
+            milisec = time[1] || '0',
+            minutes = this.minutes < 10 ? '0' + this.minutes : this.minutes
+        timer.innerHTML = `${minutes}:${sec}<span class='milisec'>.${milisec}</span>`;
     }
 }
+
 var Timer = {
     timer: 0,
     min: 0,
