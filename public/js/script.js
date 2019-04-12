@@ -7,29 +7,27 @@ var clear = document.querySelector('.clear');
 var timer = document.querySelector('.timer');
 var res = document.querySelector('.results');
 
-socket.on('connect', function (data) {
-    console.log(data);
-});
-
 
 if (window.location.pathname.indexOf('timer-2') == -1) {
     start.addEventListener('click', function () {
-      //  Timer.start()
+        //  Timer.start()
         Timer2.start()
         //socket.send('start_timer')
         socket.emit('start_timer')
     })
     stop.addEventListener('click', function () {
-       // Timer.stop()
+        // Timer.stop()
         Timer2.stop()
         socket.emit('stop')
     })
     clear.addEventListener('click', function () {
-      //  Timer.clear()
+        //  Timer.clear()
+        Timer2.clear();
         socket.emit('clear')
     })
     loop.addEventListener('click', function () {
-      //  Timer.loop()
+        //  Timer.loop()
+        Timer2.loop()
         socket.emit('loop')
     })
 }
@@ -39,9 +37,19 @@ var timerLoop
 var Timer2 = {
     miliseconds: 0,
     minutes: 0,
+    loops: 0,
+    getTime: function(){
+        var time = String(this.miliseconds / 1000).split('.')
+        var sec = parseInt(time[0]) < 10 ? '0' + time[0] : time[0],
+            milisec = time[1] || '0',
+            minutes = this.minutes < 10 ? '0' + this.minutes : this.minutes
+        return `${minutes}:${sec}<span class='milisec'>.${milisec}</span>`
+    },
     start: function () {
+        $('.start, .clear').addClass('hidden')
+        $('.btn.loop, .stop').removeClass('hidden')
         timerLoop = setInterval(() => {
-            if(this.miliseconds == 60000) {
+            if (this.miliseconds == 60000) {
                 this.miliseconds = 0;
                 this.minutes++
             }
@@ -50,14 +58,26 @@ var Timer2 = {
         }, 1000 / 10)
     },
     stop: function () {
+        $('.start, .clear').removeClass('hidden')
+        $('.btn.loop, .stop').addClass('hidden')
         clearInterval(timerLoop)
     },
+    loop: function(){
+        this.loops++;
+        $('.results').removeClass('hidden')
+        $(".results").prepend(`<tr class='loop'><td>${this.loops} km</td>
+            <td class='res-time'>0</td>
+        <td class='res-time'>${this.getTime()}</td>
+       </tr>`);
+    },
+    clear: function () {
+        this.miliseconds = 0;
+        this.minutes = 0;
+        this.stop();
+        this.render();
+    },
     render: function () {
-        var time = String(this.miliseconds / 1000).split('.')
-        var sec = parseInt(time[0]) < 10 ? '0' + time[0] : time[0], 
-            milisec = time[1] || '0',
-            minutes = this.minutes < 10 ? '0' + this.minutes : this.minutes
-        timer.innerHTML = `${minutes}:${sec}<span class='milisec'>.${milisec}</span>`;
+        timer.innerHTML = this.getTime();
     }
 }
 
