@@ -169,6 +169,7 @@ body.default {
 .results {
     margin: auto;
     width: 900px;
+    text-align: center;
 }
 
 .results th {
@@ -187,7 +188,6 @@ body.default {
     padding: 15px;
     box-sizing: border-box;
     margin: 0;
-    text-align: center;
 }
 
 .panel-colors .icon {

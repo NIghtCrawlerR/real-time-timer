@@ -11,7 +11,9 @@ app.get('/', function (req, res) {
 });
 
 io.on('connection', (socket) => {
+    console.log('connected')
     socket.on('start_timer', () => {
+        console.log('start')
         socket.broadcast.emit('start_timer')
     })
     socket.on('loop', () => {
