@@ -3,12 +3,22 @@
     src: url('../fonts/TimeFont-mono.ttf');
 }
 
+:root {
+    --half-green: rgba(74, 174, 113, 0.5);
+    --green: #4aae71;
+    --half-yellow: rgba(251, 173, 16, 0.5);
+    --yellow: #fbad10;
+    --half-red: rgba(239, 98, 98, 0.5);
+    --red: #EF6262;
+    --half-blue: rgba(0, 144, 221, 0.5);
+    --blue: #0090dd;
+}
+
 body {
     background: #f0f0f0;
-    font-family: 'Open Sans', sans-serif;
-}
-body.default {
     color: #555;
+    font-family: 'Open Sans', sans-serif;
+    margin: 0;
 }
 
 .header {
@@ -79,6 +89,7 @@ body.default {
     padding: 20px 0;
 }
 .expand {
+    cursor: pointer;
     position: absolute;
     right: 20px;
     top: 20px;
@@ -93,55 +104,87 @@ body.default {
     background: #fff;
 }
 .btn {
-    display: inline-block;
-    font-weight: 400;
+    position: relative;
+    color: #fff;
     text-align: center;
     vertical-align: middle;
     touch-action: manipulation;
     cursor: pointer;
-    background-image: none;
-    border: 1px solid transparent;
+    border: none;
     white-space: nowrap;
     padding: 8px 12px;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.6;
-    border-radius: 0;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    padding: 8px 12px;
-    font-size: 13px;
-    line-height: 1.6;
-    border-radius: 0;
-    margin-right: 5px;
-    margin-bottom: 5px;
-    min-width: 90px;
+    letter-spacing: 1px;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    outline: none;
+    transition: all .3s;
+}
+.btn::before {
+    position: absolute;
+    content: '';
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px solid;
+    top: -7px;
+    left: -7px;
+    transition: all .3s;
 }
 
+/*blue*/
 .btn-primary {
-    border-color: #007fc4;
-    color: #fff;
-    background-color: #0090dd;
-    border-color: #0090dd;
+    background-color: var(--half-blue);
 }
+.btn-primary::before {
+    border-color: var(--half-blue);
+}
+.btn-primary:hover {
+    background-color: var(--blue);
+}
+.btn-primary:hover::before {
+    border-color: var(--blue);
+}
+/*green*/
 .btn-success {
-    border-color: #429c65;
-    color: #fff;
-    background-color: #4aae71;
-    border-color: #4aae71;
+    background-color: var(--half-green);
 }
+.btn-success::before {
+    border-color: var(--half-green);
+}
+.btn-success:hover {
+    background-color: var(--green);
+}
+.btn-success:hover::before {
+    border-color: var(--green);
+}
+/*red*/
 .btn-danger {
-    border-color: #ed4b4b;
-    color: #fff;
-    background-color: #EF6262;
-    border-color: #EF6262;
+    background-color: var(--half-red);
 }
+.btn-danger::before {
+    border-color: var(--half-red);
+}
+.btn-danger:hover {
+    background-color: var(--red);
+}
+.btn-danger:hover::before {
+    border-color: var(--red);
+}
+/*yellow*/
 .btn-warning {
-    border-color: #eda004;
-    color: #fff;
-    background-color: #fbad10;
-    border-color: #fbad10;
+    background-color: var(--half-yellow);
+}
+.btn-warning::before {
+    border-color: var(--half-yellow);
+}
+.btn-warning:hover {
+    background-color: var(--yellow);
+}
+.btn-warning:hover::before {
+    border-color: var(--yellow);
 }
 
 .timer_wrap {
@@ -151,24 +194,27 @@ body.default {
 }
 
 .timer {
-    font-size: 290px;
-    line-height: auto;
+    font-size: 250px;
     font-family: 'TimeFont', Verdana;
 }
 .timer .milisec {
     font-size: 50px;
 }
 .res-time .milisec {
-    font-size: 50px;
+    font-size: 34px;
 }
 .btn-group {
     margin: auto;
-    text-align: center;
+    margin-top: 50px;
+    max-width: 200px;
+    display: flex;
+    justify-content: space-between;
 }
 
 .results {
     margin: auto;
-    width: 900px;
+    max-width: 900px;
+    width: 100%;
     text-align: center;
 }
 
@@ -184,7 +230,7 @@ body.default {
 }
 
 .results .loop {
-    font-size: 80px;
+    font-size: 60px;
     padding: 15px;
     box-sizing: border-box;
     margin: 0;
@@ -200,4 +246,43 @@ body.default {
     width: 20px;
     height: 20px;
     border-radius: 50%;
+}
+
+/*Default mode*/
+
+/*Dark mode*/
+body.dark {
+    color: #fff;
+    background: #232323;
+}
+body.dark .pannel, 
+body.dark .full-screen {
+    background: #333;
+}
+
+@media screen and (max-width: 1200px) {
+    .timer {
+        font-size: 160px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .results .loop {
+        font-size: 40px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .timer {
+        font-size: 100px;
+    }
+    .results .loop {
+        font-size: 30px;
+    }
+}
+
+@media screen and (max-width: 535px) {
+    .timer {
+        font-size: 60px;
+    }
 }

@@ -8,189 +8,138 @@ var clear = document.querySelector('.clear');
 var timer = document.querySelector('.timer');
 var res = document.querySelector('.results');
 
+start.addEventListener('click', function () {
+    Timer.start()
+    socket.emit('start_timer')
+})
+stop.addEventListener('click', function () {
+    Timer.stop()
+    socket.emit('stop')
+})
+clear.addEventListener('click', function () {
+    Timer.clear();
+    socket.emit('clear')
+})
+loop.addEventListener('click', function () {
+    Timer.loop(Timer.miliseconds, Timer.prevTime)
+    socket.emit('loop')
+})
 
-if (window.location.pathname.indexOf('timer-2') == -1) {
-    start.addEventListener('click', function () {
-        //  Timer.start()
-        Timer2.start()
-        //socket.send('start_timer')
-        socket.emit('start_timer')
-    })
-    stop.addEventListener('click', function () {
-        // Timer.stop()
-        Timer2.stop()
-        socket.emit('stop')
-    })
-    clear.addEventListener('click', function () {
-        //  Timer.clear()
-        Timer2.clear();
-        socket.emit('clear')
-    })
-    loop.addEventListener('click', function () {
-        //  Timer.loop()
-        Timer2.loop()
-        socket.emit('loop')
-    })
-}
 
-//var interval, loop, isRun = false;
-var timerLoop
-var Timer2 = {
+let timeStart = 0,
+    laps = [],
+    hash = window.location.hash,
+    timerLoop
+
+const Timer = {
     miliseconds: 0,
-    prevTime: [0, 0],
-    minutes: 0,
+    prevTime: 0,
     loops: 0,
-    getTime: function(m, s){
-        var time = String(s / 1000).split('.')
-        var sec = parseInt(time[0]) < 10 ? '0' + time[0] : time[0],
-            milisec = time[1] || '0',
-            minutes = m < 10 ? '0' + m : m
-        return `${minutes}:${sec}<span class='milisec'>.${milisec}</span>`
+    getTime: function (milisec) {
+        const c = (n) => n < 10 ? '0' + n : n
+        let sec = milisec / 1000,
+            h = parseInt(sec / 3600),
+            m = parseInt(sec / 60 % 60),
+            s = parseInt(sec % 60),
+            ms = (sec % 60).toFixed(1).split('.')[1] || 0
+
+        return c(h) + ':' + c(m) + ':' + c(s) + '<span class="milisec">.' + ms + '</span>'
     },
     start: function () {
         $('.start, .clear').addClass('hidden')
         $('.btn.loop, .stop').removeClass('hidden')
         timerLoop = setInterval(() => {
-            if (this.miliseconds == 59900) {
-                this.miliseconds = 0;
-                this.minutes++
-            }
-            else this.miliseconds += 100;
-            this.render()
+            this.miliseconds += 100;
+            this.render(this.miliseconds)
         }, 1000 / 10)
+
+        if (timeStart == 0) timeStart = new Date().getTime()
+        window.location.hash = setHash(false, timeStart, this.miliseconds, laps)
     },
     stop: function () {
         $('.start, .clear').removeClass('hidden')
         $('.btn.loop, .stop').addClass('hidden')
         clearInterval(timerLoop)
+
+        window.location.hash = setHash(true, timeStart, this.miliseconds, laps)
     },
-    loop: function(){
+    loop: function (ms, pT, onStart) {
         this.loops++;
-        
+
         $('.results').removeClass('hidden')
         $(".results").prepend(`<tr class='loop'><td>${this.loops}</td>
-            <td class='res-time'>${this.getTime(this.minutes - this.prevTime[0], this.miliseconds - this.prevTime[1])}</td>
-        <td class='res-time'>${this.getTime(this.minutes, this.miliseconds)}</td>
-       </tr>`);
-       this.prevTime = [this.minutes, this.miliseconds]
+            <td class='res-time'>${this.getTime(ms - pT)}</td>
+        <td class='res-time'>${this.getTime(ms)}</td>
+        </tr>`);
+        this.prevTime = ms
+        if (!onStart) {
+            laps.push(ms)
+            window.location.hash = setHash(false, timeStart, ms, laps)
+        }
     },
     clear: function () {
-        this.miliseconds = 0;
-        this.minutes = 0;
-        this.stop();
-        this.render();
-        res.innerHTML = '';
-        this.prevTime = [0, 0]
+        this.miliseconds = 0
+        this.stop()
+        this.render(0)
+        this.prevTime = 0
+        res.innerHTML = ''
+        laps = []
+        window.location.hash = ''
     },
-    render: function () {
-        timer.innerHTML = this.getTime(this.minutes, this.miliseconds);
+    render: function (ms) {
+        timer.innerHTML = this.getTime(ms);
     }
 }
 
-// var Timer = {
-//     timer: 0,
-//     min: 0,
-//     sec: 0,
-//     milisec: 0,
-//     loopMin: 0,
-//     loopSec: 0,
-//     loopTimer: 0,
-//     loops: 0,
-//     start: function () {
-//         $('.start, .clear').addClass('hidden')
-//         $('.btn.loop, .stop').removeClass('hidden')
-//         interval = setInterval(() => {
-//             // this.timer += 0.01;
-//             if (this.milisec == 10) {
-//                 this.milisec = 0;
-//                 this.sec++
-//             }
-//             if (this.sec == 60 && this.milisec == 0) {
-//                 this.min++;
-//             }
-//             if (this.sec == 60) {
-//                 this.sec = 0;
-//             }
-//             this.milisec++;
 
-//             this.update();
-//         }, 1000 / 10);
+var setHash = function (disabled, tS, mS, laps) {
+    let l = laps.length > 0 ? `&laps:${laps.join(',')}` : ''
+    return disabled ? `disabled&msec=${mS}${l}` : `start=${tS}${l}`
+}
 
-//         loop = setInterval(() => {
-//             if (this.loopSec == 60) {
-//                 this.loopSec = 0;
-//                 this.loopMin++;
-//             }
-//             this.loopSec++
-//             this.loopTimer += 0.01;
-//         }, 1000)
-//     },
-//     loop: function () {
-//         isRun = true;
-//         enableBtn()
-//         this.loops++
-//         var loopTime = `${this.loopMin < 10 ? '0' + this.loopMin : this.loopMin}:${this.loopSec < 10 ? '0' + this.loopSec : this.loopSec}`
-//         var milisec = `<span class="milisec">.${this.milisec == 10 ? '0' : this.milisec}</span>`
-//         var resTime = `${this.min < 10 ? '0' + this.min : this.min}:${this.sec < 10 ? '0' + this.sec : this.sec}`
-//         $('.results').removeClass('hidden')
-//         $(".results").prepend(`<tr class='loop'><td>${this.loops} km</td>
-//             <td class='res-time'>${loopTime}${milisec}</td>
-//         <td class='res-time'>${resTime}${milisec}</td>
-//        </tr>`);
+var hasLaps = function () {
+    if (hash.indexOf('laps') != -1) {
+        var reg = /(?:laps:)(.+)/
+        laps = hash.match(reg)[1].split(',')
+        laps.map((el, i) => Timer.loop(el, laps[i - 1] || 0, true))
+    }
+}
 
-//         // $('#results').editableTableWidget();
-//         this.loopMin = 0;
-//         this.loopSec = 0;
-//     },
-//     stop: function () {
-//         $('.start, .clear').removeClass('hidden')
-//         $('.btn.loop, .stop').addClass('hidden')
-//         clearInterval(interval)
-//         clearInterval(loop)
-//     },
-//     clear: function () {
-//         this.min = 0;
-//         this.sec = 0;
-//         this.milisec = 0;
-//         this.loopMin = 0;
-//         this.loopSec = 0;
-//         this.loops = 0;
-//         res.innerHTML = '';
-//         this.stop();
-//         this.update();
-//     },
-//     update: function () {
-//         $('.btn.loop').prop('disabled', isRun)
-//         var sec = `${this.sec < 10 ? '0' + this.sec : this.sec}`
-//         var milisec = `<span class="milisec">.${this.milisec == 10 ? '0' : this.milisec}</span>`
-//         //var milisec = ''
-//         timer.innerHTML = `${this.min < 10 ? '0' + this.min : this.min}:${sec == '60' ? '00' : sec}${milisec}`;
-//     }
-// }
 
-// function enableBtn() {
-//     setTimeout(function () {
-//         isRun = false
-//     }, 3000)
-// }
+var isStarted = function () {
+    if (hash) {
+        hasLaps()
+        let curTime = new Date().getTime()
+        if (hash.indexOf('disabled') == -1) {
+            let regS = /(?:#start=)(\d+)/
+            timeStart = parseInt(hash.match(regS)[1])
+            Timer.miliseconds = curTime - timeStart
+            Timer.start()
+        }
+        else {
+            let regS = /(?:msec=)(\d+)/
+            let ms = parseInt(hash.match(regS)[1])
+            Timer.miliseconds = ms
+            timeStart = curTime - ms
+            Timer.render(ms)
+        }
+    }
+}
+isStarted()
 
 socket.on('start_timer', () => {
-    Timer2.start();
+    Timer.start();
 })
 socket.on('loop', () => {
-    Timer2.loop();
+    Timer.loop(Timer.miliseconds, Timer.prevTime);
 })
 socket.on('stop', () => {
-    Timer2.stop();
+    Timer.stop();
 })
 socket.on('clear', () => {
-    Timer2.clear();
+    Timer.clear();
 })
 
 $('.expand').click(function () {
     $('.main-container').toggleClass('full-screen')
 })
-
-// $(document).keypress(function (e) {
-//     if (e.keyCode == 114) isRun = false
-// })
